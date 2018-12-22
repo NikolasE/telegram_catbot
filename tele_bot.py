@@ -4,10 +4,20 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, \
     ReplyKeyboardMarkup, KeyboardButton
+
 import requests
+import sys
 
-from secret_chat_key import TOKEN
-
+try:
+    from secret_chat_keyqqwd import TOKEN
+except ImportError as e:  # Exception as e:
+    print(type(e))
+    import os  # fallback on Heroku server
+    try:
+        TOKEN = os.environ['TOKEN']
+    except KeyError:
+        print("'TOKEN' not in ENV")
+    print("Read token from env: " + str(TOKEN))
 
 def get_random_cat_url():
     response = requests.get(url="https://api.thecatapi.com/v1/images/search")
@@ -16,15 +26,13 @@ def get_random_cat_url():
 
 
 class DemoTelegramBot:
-    TOKEN = '797064242:AAGPbRtXlyShFmvFbneLKHigMHzMpzSjtEE'
-
     def __init__(self):
         self.with_webhooks = False
-        self.updater = Updater(token=self.TOKEN)
+        self.updater = Updater(token=TOKEN)
 
         if self.with_webhooks:
-            self.updater.start_webhook(listen='127.0.0.1', port=8443, url_path=self.TOKEN)
-            self.updater.bot.set_webhook(webhook_url='https://my_server.com/' + self.TOKEN,
+            self.updater.start_webhook(listen='127.0.0.1', port=8443, url_path=TOKEN)
+            self.updater.bot.set_webhook(webhook_url='https://my_server.com/' + TOKEN,
                                          certificate=open('webhook_cert.pem', 'rb'))
 
         self.dispatcher = self.updater.dispatcher
@@ -110,6 +118,7 @@ class DemoTelegramBot:
     def run(self):
         if not self.with_webhooks:
             print("start polling")
+            sys.stdout.flush()
             self.updater.start_polling()
         self.updater.idle()
 

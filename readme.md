@@ -46,4 +46,15 @@ To be found at KreathonBot
 - Inline-Modus
 - webhooks with certificates
 
+
+# Heroku
+
+The app can be deployed on [Heroku](heroku.com):
+
+### Install Heroku
+
+[Setup Heroku for python](https://devcenter.heroku.com/articles/getting-started-with-python#set-up)
+
+https://devcenter.heroku.com/articles/config-vars
+
         
