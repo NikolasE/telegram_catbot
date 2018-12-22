@@ -28,6 +28,10 @@ App can be run locally with polling or on server (with_webhoks=True)
 
 
 
+
+openssl req -newkey rsa:2048 -sha256 -nodes -keyout YOURPRIVATE.key -x509 -days 365 -out YOURPUBLIC.pem -subj "/C=de/ST=MUNICH/CN=https://telegramcatbott.herokuapp.com/"
+
+
 ### Demo Program
 
 To be found at KreathonBot
@@ -55,6 +59,6 @@ The app can be deployed on [Heroku](heroku.com):
 
 [Setup Heroku for python](https://devcenter.heroku.com/articles/getting-started-with-python#set-up)
 
-https://devcenter.heroku.com/articles/config-vars
+https://devcenter.heroku.com/articles/config-varsheroku ps:scale web=0
 
         

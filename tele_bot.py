@@ -7,17 +7,17 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, Callbac
 
 import requests
 import sys
+import os
 
 try:
-    from secret_chat_keyqqwd import TOKEN
+    from secret_chat_key import TOKEN
 except ImportError as e:  # Exception as e:
-    print(type(e))
-    import os  # fallback on Heroku server
     try:
         TOKEN = os.environ['TOKEN']
     except KeyError:
         print("'TOKEN' not in ENV")
-    print("Read token from env: " + str(TOKEN))
+    print("Read TOKEN from env")
+
 
 def get_random_cat_url():
     response = requests.get(url="https://api.thecatapi.com/v1/images/search")
@@ -28,12 +28,18 @@ def get_random_cat_url():
 class DemoTelegramBot:
     def __init__(self):
         self.with_webhooks = False
+        try:
+            self.with_webhooks = os.environ['WITH_HOOK']
+        except KeyError:
+            pass
+
         self.updater = Updater(token=TOKEN)
 
         if self.with_webhooks:
-            self.updater.start_webhook(listen='127.0.0.1', port=8443, url_path=TOKEN)
-            self.updater.bot.set_webhook(webhook_url='https://my_server.com/' + TOKEN,
-                                         certificate=open('webhook_cert.pem', 'rb'))
+            PORT = int(os.environ.get('PORT', '8443'))
+            print("Running with webhook on port %i" % PORT)
+            self.updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
+            self.updater.bot.set_webhook("https://telegramcatbott.herokuapp.com/" + TOKEN)
 
         self.dispatcher = self.updater.dispatcher
 
@@ -87,6 +93,7 @@ class DemoTelegramBot:
     def text_cb(bot, update):
         assert isinstance(update, Update)
         # print (update) -> https://www.cleancss.com/python-beautify/
+        print("Got text: " + str(update.message.text))
         first_name = update.message.chat.first_name
         msg = "Hello %s: %s (you can also use /help)" % (first_name, update.message.text.upper())
         bot.send_message(chat_id=update.message.chat_id, text=msg)
