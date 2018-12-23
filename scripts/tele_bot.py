@@ -9,6 +9,11 @@ import requests
 import sys
 import os
 
+import django
+django.setup()
+
+from django_cat_app.models import UserLog
+
 try:
     from secret_chat_key import TOKEN
 except ImportError as e:  # Exception as e:
@@ -92,10 +97,18 @@ class DemoTelegramBot:
     @staticmethod
     def text_cb(bot, update):
         assert isinstance(update, Update)
-        # print (update) -> https://www.cleancss.com/python-beautify/
-        print("Got text: " + str(update.message.text))
+
         first_name = update.message.chat.first_name
-        msg = "Hello %s: %s (you can also use /help)" % (first_name, update.message.text.upper())
+
+        ul, created = UserLog.objects.get_or_create(user_id=first_name)
+        assert isinstance(ul, UserLog)
+        ul.cat_count += 1
+        ul.save()
+
+        # print (update) -> https://www.cleancss.com/python-beautify/
+        print("Got text: %s, cat_count: %i" % (str(update.message.text), ul.cat_count))
+        msg = "Hello %s: %s (you can also use /help) (this is your cat nr %i)" % (first_name, update.message.text.upper(),
+                                                                               ul.cat_count)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
         bot.send_photo(chat_id=update.message.chat_id, photo=get_random_cat_url())
 
