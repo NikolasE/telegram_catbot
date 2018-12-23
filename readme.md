@@ -39,7 +39,7 @@ To be found at KreathonBot
 - /location
 - /cat
 
-
+django-admin startproject django_cat_project
 ## TODO:
 - Emoji: https://apps.timwhitlock.info/emoji/tables/unicode
 - Inline-Modus
@@ -54,5 +54,10 @@ The app can be deployed on [Heroku](heroku.com):
 
 - https://devcenter.heroku.com/articles/config-vars
 - heroku ps:scale web=1
+
+
+## Postgresql-Database
+
+django-admin startproject django_cat_project
 
         
