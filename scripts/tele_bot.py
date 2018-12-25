@@ -13,7 +13,6 @@ import os
 # Add django as interface to Databse
 import django
 django.setup()
-# from django.db.models import Sum
 from django_cat_app.models import UserLog
 
 
@@ -70,21 +69,6 @@ class DemoTelegramBot:
 
         # callback for custom keyboards
         self.updater.dispatcher.add_handler(CallbackQueryHandler(self.mode_button_cb))
-
-    # @app.route('/total', methods=['GET', 'POST'])
-    # def total_cat_count(self):
-    #     # if request.method == 'POST':
-    #     #     msg = request.form['bla']
-    #     # else:
-    #     #     msg = list(request.args.keys())
-    #
-    #     total_cat_count = UserLog.objects.aggregate(Sum('cat_count'))
-    #
-    #     response = jsonify({'cat_count': total_cat_count})
-    #     response.headers.add('Access-Control-Allow-Origin', '*')
-    #
-    #     return response
-
 
     @staticmethod
     def on_options(bot, update):
