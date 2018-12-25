@@ -18,7 +18,7 @@ try:
     from secret_chat_key import TELEGRAM_TOKEN
 except ImportError as e:  # Exception as e:
     try:
-        TOKEN = os.environ['TELEGRAM_TOKEN']
+        TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
     except KeyError:
         print("'TELEGRAM_TOKEN' not in ENV")
     print("Read TELEGRAM_TOKEN from env")

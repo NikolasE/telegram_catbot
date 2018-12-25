@@ -55,7 +55,7 @@ The app can be deployed on [Heroku](heroku.com):
 - https://devcenter.heroku.com/articles/config-vars
 - heroku ps:scale web=1
 
-- heroku config:set WITH_HOOK=1 DJANGO_SETTINGS_MODULE=DJANGO_SETTINGS_MODULE TELEGRAM_TOKEN=797....
+- heroku config:set WITH_HOOK=1 DJANGO_SETTINGS_MODULE=django_cat_project.settings TELEGRAM_TOKEN=797....
 - heroku dyno:restart
 
 #### Heroku-CLI
