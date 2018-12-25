@@ -6,7 +6,7 @@ for info I found while developing the demo.
 
 The bot can be found at [CatBot2000_bot](t.me/CatBot2000_bot).
 
-
+![Demo Image for Chatbot](img.png)
 
 It's a showcase for several features:
 
