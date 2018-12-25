@@ -1,4 +1,4 @@
-requests 
+requests
 python-telegram-bot
 django
 django-heroku

@@ -9,11 +9,16 @@ import requests
 import sys
 import os
 
+
+# Add django as interface to Databse
 import django
 django.setup()
-
+# from django.db.models import Sum
 from django_cat_app.models import UserLog
 
+
+# if run locally, we can read the TOKEN from a file, as fallback (if e.g. run on heroku, we use an
+# environment variable)
 try:
     from secret_chat_key import TELEGRAM_TOKEN
 except ImportError as e:  # Exception as e:
@@ -32,6 +37,8 @@ def get_random_cat_url():
 
 class DemoTelegramBot:
     def __init__(self):
+
+        # activate webhooks (instead of polling)
         self.with_webhooks = False
         try:
             self.with_webhooks = os.environ['WITH_HOOK']
@@ -41,20 +48,21 @@ class DemoTelegramBot:
         self.updater = Updater(token=TELEGRAM_TOKEN)
 
         if self.with_webhooks:
-            PORT = int(os.environ.get('PORT', '8443'))
-            print("Running with webhook on port %i" % PORT)
-            self.updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TELEGRAM_TOKEN)
+            port = int(os.environ.get('PORT', '8443'))  # is set by Heroku if run there
+            print("Running with webhook on port %i" % port)
+            self.updater.start_webhook(listen="0.0.0.0", port=port, url_path=TELEGRAM_TOKEN)
             self.updater.bot.set_webhook("https://telegramcatbott.herokuapp.com/" + TELEGRAM_TOKEN)
 
         self.dispatcher = self.updater.dispatcher
 
-        # create callbacks for '/help' and '/options'
+        # create callbacks for some commands
         self.dispatcher.add_handler(CommandHandler("help", self.on_help))
         self.dispatcher.add_handler(CommandHandler("options", self.on_options))
         self.dispatcher.add_handler(CommandHandler("location", self.on_location))
         self.dispatcher.add_handler(CommandHandler("cat", self.on_cat))
 
         # Callback for normal messages from user
+        # This function also contains the Database-counter(!)
         self.dispatcher.add_handler(MessageHandler(Filters.text, self.text_cb))
 
         # Callback for position
@@ -63,9 +71,24 @@ class DemoTelegramBot:
         # callback for custom keyboards
         self.updater.dispatcher.add_handler(CallbackQueryHandler(self.mode_button_cb))
 
+    # @app.route('/total', methods=['GET', 'POST'])
+    # def total_cat_count(self):
+    #     # if request.method == 'POST':
+    #     #     msg = request.form['bla']
+    #     # else:
+    #     #     msg = list(request.args.keys())
+    #
+    #     total_cat_count = UserLog.objects.aggregate(Sum('cat_count'))
+    #
+    #     response = jsonify({'cat_count': total_cat_count})
+    #     response.headers.add('Access-Control-Allow-Origin', '*')
+    #
+    #     return response
+
+
     @staticmethod
     def on_options(bot, update):
-        # encode question is callback_data ('w'): hack, could be something better
+        # encode question in callback_data ('w'): hack, could be something better
         keyboard = [[InlineKeyboardButton("Bad", callback_data='w,1'),
                      InlineKeyboardButton("OK", callback_data='w,2'),
                      InlineKeyboardButton("Great", callback_data='w,3')]]
@@ -91,13 +114,14 @@ class DemoTelegramBot:
             text = "Unhandled callback_data %s" % query.data
             print(text)
 
-        # Replace keyboard with this message
+        # Replace keyboard with this message to clean up the window
         bot.edit_message_text(text=text, chat_id=query.message.chat_id, message_id=query.message.message_id)
 
     @staticmethod
     def text_cb(bot, update):
         assert isinstance(update, Update)
 
+        # used to identify users. Is not unique, but we don't want to store unique personal information by design
         first_name = update.message.chat.first_name
 
         ul, created = UserLog.objects.get_or_create(user_id=first_name)
@@ -107,8 +131,9 @@ class DemoTelegramBot:
 
         # print (update) -> https://www.cleancss.com/python-beautify/
         print("Got text: %s, cat_count: %i" % (str(update.message.text), ul.cat_count))
-        msg = "Hello %s: %s (you can also use /help) (this is your cat nr %i)" % (first_name, update.message.text.upper(),
-                                                                               ul.cat_count)
+        msg = "Hello %s: %s (you can also use /help) (this is your cat nr %i)" % (first_name,
+                                                                                  update.message.text.upper(),
+                                                                                  ul.cat_count)
         bot.send_message(chat_id=update.message.chat_id, text=msg)
         bot.send_photo(chat_id=update.message.chat_id, photo=get_random_cat_url())
 
@@ -137,7 +162,7 @@ class DemoTelegramBot:
 
     def run(self):
         if not self.with_webhooks:
-            print("start polling")
+            print("Start polling")
             sys.stdout.flush()
             self.updater.start_polling()
         self.updater.idle()
