@@ -15,13 +15,13 @@ django.setup()
 from django_cat_app.models import UserLog
 
 try:
-    from secret_chat_key import TOKEN
+    from secret_chat_key import TELEGRAM_TOKEN
 except ImportError as e:  # Exception as e:
     try:
-        TOKEN = os.environ['TOKEN']
+        TOKEN = os.environ['TELEGRAM_TOKEN']
     except KeyError:
-        print("'TOKEN' not in ENV")
-    print("Read TOKEN from env")
+        print("'TELEGRAM_TOKEN' not in ENV")
+    print("Read TELEGRAM_TOKEN from env")
 
 
 def get_random_cat_url():
@@ -38,13 +38,13 @@ class DemoTelegramBot:
         except KeyError:
             pass
 
-        self.updater = Updater(token=TOKEN)
+        self.updater = Updater(token=TELEGRAM_TOKEN)
 
         if self.with_webhooks:
             PORT = int(os.environ.get('PORT', '8443'))
             print("Running with webhook on port %i" % PORT)
-            self.updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
-            self.updater.bot.set_webhook("https://telegramcatbott.herokuapp.com/" + TOKEN)
+            self.updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TELEGRAM_TOKEN)
+            self.updater.bot.set_webhook("https://telegramcatbott.herokuapp.com/" + TELEGRAM_TOKEN)
 
         self.dispatcher = self.updater.dispatcher
 
