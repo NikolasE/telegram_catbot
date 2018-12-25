@@ -2,3 +2,4 @@ requests
 python-telegram-bot
 django
 django-heroku
+psycopg2-binary
