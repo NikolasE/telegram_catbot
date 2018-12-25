@@ -4,6 +4,7 @@ This demo uses python-telegram-bot with python3 to create a simple chatbot that 
 usage in a postgresql-Database. It is primarily meant as a playground to explore new technologies and contains notes
 for info I found while developing the demo. 
 
+The bot can be found at [CatBot2000_bot](t.me/CatBot2000_bot).
 
 
 
