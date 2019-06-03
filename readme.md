@@ -79,7 +79,7 @@ or put it into an environment variable.
 - python3 manage.py startapp django_cat_app
 - Add Models in [django_cat_app/models.py](django_cat_app/models.py)
 - ```DJANGO_SETTINGS_MODULE=django_cat_project.settings```, Add directory to ```$PYTHONPATH```
-- Configure DB for local and remove usage:
+- Configure DB for local and remote usage:
     - check [django_cat_project/settings.py](django_cat_project/settings.py):
         - replace sqlite with postgresql
         - set database name (e.g. cat_db)

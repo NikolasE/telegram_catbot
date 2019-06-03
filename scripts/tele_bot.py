@@ -60,12 +60,13 @@ class DemoTelegramBot:
         self.dispatcher.add_handler(CommandHandler("location", self.on_location))
         self.dispatcher.add_handler(CommandHandler("cat", self.on_cat))
 
+
         # Callback for normal messages from user
         # This function also contains the Database-counter(!)
         self.dispatcher.add_handler(MessageHandler(Filters.text, self.text_cb))
 
         # Callback for position
-        self.dispatcher.add_handler(MessageHandler(Filters.location, self.got_location))
+        self.dispatcher.add_handler(MessageHandler(Filters.location, self.got_location, edited_updates=True))
 
         # callback for custom keyboards
         self.updater.dispatcher.add_handler(CallbackQueryHandler(self.mode_button_cb))
@@ -124,8 +125,14 @@ class DemoTelegramBot:
     @staticmethod
     def got_location(bot, update):
         assert isinstance(update, Update)
-        a, b = update.message.location.latitude, update.message.location.longitude
-        bot.send_message(chat_id=update.message.chat_id, text="You are at %.3f, %.3f" % (a, b))
+
+        if update.edited_message:
+            message = update.edited_message
+        else:
+            message = update.message
+
+        a, b = message.location.latitude, message.location.longitude
+        bot.send_message(chat_id=message.chat_id, text="You are at %.3f, %.3f" % (a, b))
 
     @staticmethod
     def on_location(bot, update):
